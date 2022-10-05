@@ -13,6 +13,7 @@ protocol SetGameViewModel: ObservableObject {
     associatedtype CardVM where CardVM: CardViewModel, CardVM.CardType == CardType
 
     var gamePlay: SetGamePlay<CardContents> { set get }
+    var noMoreHint: Bool { set get}
     
     init(with cardFeatures: CardContents)
 }
@@ -23,6 +24,15 @@ extension SetGameViewModel {
 //        gamePlay = SetGamePlay(with: cardFeatures)
 //    }
  
+    var noMoreHint: Bool {
+        get {
+            gamePlay.noMoreHint
+        }
+        set {
+            gamePlay.noMoreHint = newValue
+        }
+    }
+    
 // MARK: - Data Providers
 
     var cards: [CardType] {

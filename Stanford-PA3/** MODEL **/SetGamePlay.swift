@@ -16,6 +16,8 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
     private var shownHints: Array<(Set<Int>)> = Array()
 
     private var deckFirstIndex = 12
+    
+    var noMoreHint = false
 
     init(with cardFeatures: CardContents) {
         setChecker = SetGameChecker<CardContents>(with: cardFeatures)
@@ -107,7 +109,7 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
             
             shownHints.append(hint)
         } else {
-            print("NO MORE HINTS")
+            noMoreHint = true
             
             unmarkAllCards()
             shownHints = Array()

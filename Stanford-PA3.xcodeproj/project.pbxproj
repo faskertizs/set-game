@@ -218,8 +218,8 @@
 		0BAD524D2794D56D0012A963 /* ** VIEW MODEL ** */ = {
 			isa = PBXGroup;
 			children = (
-				0B4C9490279C4FFE0099EA81 /* CardViewModel */,
 				0B4C948B279C376C0099EA81 /* GameViewModel */,
+				0B4C9490279C4FFE0099EA81 /* CardViewModel */,
 			);
 			path = "** VIEW MODEL **";
 			sourceTree = "<group>";
@@ -476,7 +476,7 @@
 				DEVELOPMENT_TEAM = PRY29PC23C;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Stanford-PA3/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -498,7 +498,7 @@
 				DEVELOPMENT_TEAM = PRY29PC23C;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Stanford-PA3/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

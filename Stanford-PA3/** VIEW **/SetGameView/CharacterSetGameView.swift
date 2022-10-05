@@ -40,6 +40,9 @@ struct CharacterSetGameView: View {
             }
             .padding(.horizontal, 15)
         }
+        .alert("No more hint", isPresented: $viewModel.noMoreHint) {
+            Button("Ok", action: {} )
+        }
     }
     
     func newGame() -> some View {
