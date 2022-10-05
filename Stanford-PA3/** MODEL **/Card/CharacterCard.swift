@@ -8,11 +8,11 @@
 import Foundation
 
 struct CharacterCard: Card {
-    var id: UUID
-    var number: Int
-    var color: ColorFeature
-    var figure: String
-    var variation: CharacterEmphasis
+    let id: UUID
+    let number: Int
+    let color: ColorFeature
+    let figure: String
+    let variation: CharacterEmphasis
     
     init(number: Int, color: ColorFeature, figure: String, variation: CharacterEmphasis) {
         self.id = UUID()

@@ -8,11 +8,11 @@
 import Foundation
 
 struct ShapeCard: Card {
-    var id: UUID
-    var number: Int
-    var color: ColorFeature
-    var figure: ShapeFeature
-    var variation: ShadingFeature
+    let id: UUID
+    let number: Int
+    let color: ColorFeature
+    let figure: ShapeFeature
+    let variation: ShadingFeature
     
     init(number: Int, color: ColorFeature, figure: ShapeFeature, variation: ShadingFeature) {
         self.id = UUID()
