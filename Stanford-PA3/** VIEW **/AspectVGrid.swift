@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct AspectVGrid<Item, ItemView>: View where Item: Identifiable, ItemView: View {
-    var items: [Item]
-    var aspectRatio: CGFloat
+    private var items: [Item]
+    private var aspectRatio: CGFloat
     #warning("!!! 'minimumWidth' could be 'CGFloat?'")
-    var minimumWidth: CGFloat
-    var content: (Item) -> ItemView
+    private var minimumWidth: CGFloat
+    private var content: (Item) -> ItemView
 
     init(items: [Item], aspectRatio: CGFloat, minimumWidth: CGFloat, @ViewBuilder content: @escaping (Item) -> ItemView) {
         self.items = items

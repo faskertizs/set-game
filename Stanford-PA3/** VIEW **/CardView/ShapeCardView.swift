@@ -18,7 +18,7 @@ struct ShapeCardView: View {
         static let extraPaddingScaleForCardsInSet: CGFloat = 0.2
     }
     
-    var card: ShapeCardViewModel
+    private var card: ShapeCardViewModel
 
     init(for card: ShapeCardViewModel) {
         self.card = card

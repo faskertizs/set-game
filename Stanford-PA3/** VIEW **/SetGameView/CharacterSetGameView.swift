@@ -8,7 +8,12 @@
 import SwiftUI
 
 struct CharacterSetGameView: View {
-    @ObservedObject var viewModel: CharacterSetGameViewModel
+    @ObservedObject private var viewModel: CharacterSetGameViewModel
+    
+    init(viewModel: CharacterSetGameViewModel) {
+        self.viewModel = viewModel
+    }
+    
     private struct DrawingConstants {
         static let aspectRatio: CGFloat = 2/3
         static let cardPaddingScale: CGFloat = 0.05

@@ -20,7 +20,7 @@ struct CharacterCardView: View {
         static let extraPaddingScaleForCardsInSet: CGFloat = 0.2
     }
     
-    var card: CharacterCardViewModel
+    private var card: CharacterCardViewModel
 
     init(for card: CharacterCardViewModel) {
         self.card = card
