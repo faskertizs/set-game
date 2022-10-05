@@ -48,7 +48,7 @@ extension SetGameViewModel {
 // MARK: - Intents
     
     func choose(card: CardVM) {
-        gamePlay.chooseCard(id: card.id)
+        gamePlay.selectCard(id: card.id)
     }
     
     func newGame() {

@@ -8,11 +8,14 @@
 import Foundation
 
 struct SetGamePlay<CardContents> where CardContents: CardFeatures {
+    
     private var cards: [CardContents.CardType]
     
     private var setChecker: SetGameChecker<CardContents>
     
     private var shownHints: Array<(Set<Int>)> = Array()
+
+    private var deckFirstIndex = 12
 
     init(with cardFeatures: CardContents) {
         setChecker = SetGameChecker<CardContents>(with: cardFeatures)
@@ -38,95 +41,40 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
 //        setGameNearFinishForTest()
     }
     
+    
+// MARK: - Data Providers
+    
     func cardsOnTable() -> [CardContents.CardType] {
         return cards.filter { $0.isOnTable == true }
-    }
-    
-    private var deckFirstIndex = 12
-    
-    private func selectedCardIndices() -> [Int] {
-        return cards.indices.filter({ cards[$0].isSelected })
-    }
-    
-    private func inSetCardIndices() -> [Int] {
-        return cards.indices.filter({ cards[$0].isInSet })
-    }
-    
-    private func firstInSetCardIndex() -> Int? {
-        return cards.indices.filter({ cards[$0].isInSet }).first
-    }
-    
-    private mutating func deselectAllCards() {
-        cards.indices.forEach {
-            cards[$0].isSelected = false
-            cards[$0].isInMismatch = false
-            cards[$0].isHinted = false
-        }
-    }
-    
-    mutating func chooseCard(id: UUID) {
-        guard let chosenIndex = cards.firstIndex(where: { $0.id == id }) else {
-            return
-        }
-        
-        let chosenCard = cards[chosenIndex]
-        
-        if selectedCardIndices().count == 3 || !shownHints.isEmpty {
-            if inSetCardIndices().count == 3 {            // Set
-                if !chosenCard.isInSet {
-                    cards[chosenIndex].isSelected = true
-                }
-                replaceInSetCards()
-            } else {                            // Mismatch: inSetCardIndices().count == 0
-                deselectAllCards()
-                shownHints = Array()
-                cards[chosenIndex].isSelected = true
-            }
-        } else {
-            cards[chosenIndex].isSelected.toggle()
-            checkSet()
-        }
-    }
-    
-    private mutating func dismismatchCards() {
-        cards.indices.forEach { cards[$0].isInMismatch = false }
-    }
-    
-    private mutating func emptyFoundSet() {
-        cards.indices.forEach { cards[$0].isInSet = false }
     }
     
     func isDeckEmpty() -> Bool {
         return deckFirstIndex >= cards.count
     }
     
-    private mutating func checkSet() {
-        if selectedCardIndices().count == 3 {
-            
-            let setWasFound = setChecker.areCardsASet(cards[selectedCardIndices()[0]],
-                                    cards[selectedCardIndices()[1]],
-                                    cards[selectedCardIndices()[2]])
-            
-            if setWasFound {
-                cards.indices.forEach { cards[$0].isInSet = cards[$0].isSelected }
-            } else {
-                cards.indices.forEach { cards[$0].isInMismatch = cards[$0].isSelected }
-            }
-        }
-    }
+// MARK: - Intents
     
-    #warning("!!! Need some animation on UI.")
-    private mutating func replaceInSetCards() {
-        while firstInSetCardIndex() != nil {
-            let index = firstInSetCardIndex()!
-            cards[index].isOnTable = false
-            cards[index].isSelected = false
-            cards[index].isInSet = false
-            if !isDeckEmpty() {
-                cards[deckFirstIndex].isOnTable = true
-                cards.insert(cards.remove(at: deckFirstIndex), at: index)
-                deckFirstIndex += 1
+    mutating func selectCard(id: UUID) {
+        guard let selectedIndex = cards.firstIndex(where: { $0.id == id }) else {
+            return
+        }
+        
+        let selectedICard = cards[selectedIndex]
+        
+        if selectedCardIndices().count == 3 || !shownHints.isEmpty {
+            if inSetCardIndices().count == 3 {            // Set
+                if !selectedICard.isInSet {
+                    cards[selectedIndex].isSelected = true
+                }
+                replaceCardsInSet()
+            } else {                            // Mismatch: inSetCardIndices().count == 0
+                unmarkAllCards()
+                shownHints = Array()
+                cards[selectedIndex].isSelected = true
             }
+        } else {
+            cards[selectedIndex].isSelected.toggle()
+            checkSet()
         }
     }
     
@@ -134,14 +82,14 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
         deckFirstIndex = 12
         cards.indices.forEach { cards[$0].isOnTable =  $0 < deckFirstIndex}
         emptyFoundSet()
-        deselectAllCards()
+        unmarkAllCards()
         cards.shuffle()
     }
     
     mutating func indicateHint() {
-        deselectAllCards()
+        unmarkAllCards()
         if inSetCardIndices().count == 3 {
-            replaceInSetCards()
+            replaceCardsInSet()
         }
         
         let newHintFound = checkForNextHint()
@@ -161,8 +109,77 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
         } else {
             print("NO MORE HINTS")
             
-            deselectAllCards()
+            unmarkAllCards()
             shownHints = Array()
+        }
+    }
+    
+    mutating func addCards() {
+        if firstInSetCardIndex() != nil {
+            replaceCardsInSet()
+        } else {
+            for _ in (0..<3) {
+                if !isDeckEmpty() {
+                    cards[deckFirstIndex].isOnTable = true
+                    deckFirstIndex += 1
+                }
+            }
+        }
+    }
+    
+// MARK: - Helper Methods
+    
+    private func selectedCardIndices() -> [Int] {
+        return cards.indices.filter({ cards[$0].isSelected })
+    }
+    
+    private func inSetCardIndices() -> [Int] {
+        return cards.indices.filter({ cards[$0].isInSet })
+    }
+    
+    private func firstInSetCardIndex() -> Int? {
+        return cards.indices.filter({ cards[$0].isInSet }).first
+    }
+    
+    private mutating func unmarkAllCards() {
+        cards.indices.forEach {
+            cards[$0].isSelected = false
+            cards[$0].isInMismatch = false
+            cards[$0].isHinted = false
+        }
+    }
+    
+    private mutating func emptyFoundSet() {
+        cards.indices.forEach { cards[$0].isInSet = false }
+    }
+    
+    private mutating func checkSet() {
+        if selectedCardIndices().count == 3 {
+            
+            let setWasFound = setChecker.areCardsASet(cards[selectedCardIndices()[0]],
+                                    cards[selectedCardIndices()[1]],
+                                    cards[selectedCardIndices()[2]])
+            
+            if setWasFound {
+                cards.indices.forEach { cards[$0].isInSet = cards[$0].isSelected }
+            } else {
+                cards.indices.forEach { cards[$0].isInMismatch = cards[$0].isSelected }
+            }
+        }
+    }
+    
+    #warning("!!! Need some animation on UI.")
+    private mutating func replaceCardsInSet() {
+        while firstInSetCardIndex() != nil {
+            let index = firstInSetCardIndex()!
+            cards[index].isOnTable = false
+            cards[index].isSelected = false
+            cards[index].isInSet = false
+            if !isDeckEmpty() {
+                cards[deckFirstIndex].isOnTable = true
+                cards.insert(cards.remove(at: deckFirstIndex), at: index)
+                deckFirstIndex += 1
+            }
         }
     }
     
@@ -227,19 +244,6 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
         }
 
         return newHintFound
-    }
-    
-    mutating func addCards() {
-        if firstInSetCardIndex() != nil {
-            replaceInSetCards()
-        } else {
-            for _ in (0..<3) {
-                if !isDeckEmpty() {
-                    cards[deckFirstIndex].isOnTable = true
-                    deckFirstIndex += 1
-                }
-            }
-        }
     }
     
 // MARK: - Functions only for test
