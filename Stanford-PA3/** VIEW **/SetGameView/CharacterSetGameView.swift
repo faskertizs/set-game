@@ -12,7 +12,7 @@ struct CharacterSetGameView: View {
     private struct DrawingConstants {
         static let aspectRatio: CGFloat = 2/3
         static let cardPaddingScale: CGFloat = 0.05
-        static let cardSpaceMinimumWidth: CGFloat = 120
+        static let cardSpaceMinimumWidth: CGFloat = 80
     }
     
     var body: some View {

@@ -11,8 +11,8 @@ import SwiftUI
 struct Stanford_PA3App: App {
     var body: some Scene {
         WindowGroup {
-            CharacterSetGameView(viewModel: GameSetupCoordinator().viewModel)
-//            ShapeSetGameView(viewModel: GameSetupCoordinator().viewModel)
+//            CharacterSetGameView(viewModel: GameSetupCoordinator().viewModel)
+            ShapeSetGameView(viewModel: GameSetupCoordinator().viewModel)
         }
     }
 }

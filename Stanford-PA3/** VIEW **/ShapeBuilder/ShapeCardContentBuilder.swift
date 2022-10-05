@@ -16,6 +16,7 @@ struct ShapeCardContentBuilder {
     }
     
     @ViewBuilder func build() -> some View {
+        #warning("For squiggle check: https://stackoverflow.com/questions/25387940/how-to-draw-a-perfect-squiggle-in-set-card-game-with-objective-c and https://github.com/rkballoo/SetCardGame/blob/main/SetCardGame/Squiggle.swift")
         switch card.shape {
         case .diamond:
             Diamond().fill()

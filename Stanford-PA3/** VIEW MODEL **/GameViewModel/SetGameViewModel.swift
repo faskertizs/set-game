@@ -10,12 +10,52 @@ import Foundation
 protocol SetGameViewModel: ObservableObject {
     associatedtype CardContents where CardContents: CardFeatures
     associatedtype CardType where CardContents.CardType == CardType
-    associatedtype CardViewModel
+    associatedtype CardVM where CardVM: CardViewModel, CardVM.CardType == CardType
 
-    var gamePlay: SetGamePlay<CardContents> { get }
-    var cards: [CardType] { get }
+    var gamePlay: SetGamePlay<CardContents> { set get }
     
-    func cardViewModels() -> [CardViewModel]
+    init(with cardFeatures: CardContents)
+}
+
+extension SetGameViewModel {
+#warning("??? How can init with a common behavior be provided by the protocol itself?")
+//    init(with cardFeatures: CardContents) {
+//        gamePlay = SetGamePlay(with: cardFeatures)
+//    }
+ 
+// MARK: - Data Providers
+
+    var cards: [CardType] {
+        gamePlay.cardsOnTable()
+    }
+ 
+    func cardViewModels() -> [CardVM] {
+        //#warning("!!! I'm sure there is a more compact built-in solution for this with arrays.")
+        
+        var cardViewModels = [CardVM]()
+        
+        for card in cards {
+            cardViewModels.append(CardVM(with: card))
+        }
+        
+        return cardViewModels
+    }
     
-    func choose(card: CardViewModel)
+    func isAddCardsButtonDisabled() -> Bool {
+        return gamePlay.isDeckEmpty()
+    }
+    
+// MARK: - Intents
+    
+    func choose(card: CardVM) {
+        gamePlay.chooseCard(id: card.id)
+    }
+    
+    func newGame() {
+        gamePlay.startNewGame()
+    }
+    
+    func addCards() {
+        gamePlay.addCards()
+    }
 }

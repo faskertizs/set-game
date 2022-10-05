@@ -25,7 +25,7 @@ struct GameSetupCoordinator<ViewModel: SetGameViewModel> {
         case japanese(_ fixOrRandom: FixOrRandom)
     }
         
-    var gameTypeChosenByTheUser = AGameChosenByTheUser.letter(.random)
+    var gameTypeChosenByTheUser = AGameChosenByTheUser.classic
     
 //MARK: - View Model Roles
     private(set) var viewModel: ViewModel
