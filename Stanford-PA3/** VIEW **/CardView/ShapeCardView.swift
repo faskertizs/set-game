@@ -29,7 +29,7 @@ struct ShapeCardView: View {
             let extraPadding = card.isInSet ? geometry.size.width * DrawingConstants.extraPaddingScaleForCardsInSet : 0
             ZStack {
                 let shape = RoundedRectangle(cornerRadius: DrawingConstants.cornerRadius)
-                shape.fill().foregroundColor(card.isInMismatch ? .black : (card.isSelected ? .yellow : .white))
+                shape.fill().foregroundColor(card.isInMismatch ? .black : (card.isSelected ? .yellow : (card.card.isHinted ? .gray : .white)))
                 shape.strokeBorder(lineWidth: DrawingConstants.borderLineWidth).foregroundColor(.gray)
                 
                 cardContent()

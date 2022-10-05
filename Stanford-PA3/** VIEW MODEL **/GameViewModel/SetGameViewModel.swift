@@ -58,4 +58,8 @@ extension SetGameViewModel {
     func addCards() {
         gamePlay.addCards()
     }
+    
+    func showHint() {
+        gamePlay.indicateHint()
+    }
 }

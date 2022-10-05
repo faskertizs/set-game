@@ -11,6 +11,8 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
     private var cards: [CardContents.CardType]
     
     private var setChecker: SetGameChecker<CardContents>
+    
+    private var shownHints: Array<(Set<Int>)> = Array()
 
     init(with cardFeatures: CardContents) {
         setChecker = SetGameChecker<CardContents>(with: cardFeatures)
@@ -54,8 +56,12 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
         return cards.indices.filter({ cards[$0].isInSet }).first
     }
     
-    private mutating func deselectSelectedCards() {
-        cards.indices.forEach { cards[$0].isSelected = false }
+    private mutating func deselectAllCards() {
+        cards.indices.forEach {
+            cards[$0].isSelected = false
+            cards[$0].isInMismatch = false
+            cards[$0].isHinted = false
+        }
     }
     
     mutating func chooseCard(id: UUID) {
@@ -65,43 +71,21 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
         
         let chosenCard = cards[chosenIndex]
         
-        if selectedCardIndices().count == 3 {
-            // Set
-            if inSetCardIndices().count == 3 {
+        if selectedCardIndices().count == 3 || !shownHints.isEmpty {
+            if inSetCardIndices().count == 3 {            // Set
                 if !chosenCard.isInSet {
                     cards[chosenIndex].isSelected = true
                 }
                 replaceInSetCards()
-            } else { // Mismatch: inSetCardIndices().count == 0
-                deselectSelectedCards()
-                dismismatchCards()
+            } else {                            // Mismatch: inSetCardIndices().count == 0
+                deselectAllCards()
+                shownHints = Array()
                 cards[chosenIndex].isSelected = true
             }
         } else {
             cards[chosenIndex].isSelected.toggle()
             checkSet()
-
         }
-        
-//        if chosenCard.isInSet {
-//            replaceInSetCards()
-//        } else if chosenCard.isInMismatch {
-//            deselectSelectedCards()
-//            dismismatchCards()
-//            cards[chosenIndex].isSelected.toggle()
-//        } else if chosenCard.isSelected {
-//            cards[chosenIndex].isSelected.toggle()
-//        } else {
-//            if selectedCardIndices().count == 3 {
-//                deselectSelectedCards()
-//                dismismatchCards()
-//                emptyFoundSet()
-//                cards[chosenIndex].isSelected.toggle()
-//            } else {
-//                cards[chosenIndex].isSelected.toggle()
-//                checkSet()
-//            }
-//        }
     }
     
     private mutating func dismismatchCards() {
@@ -150,9 +134,96 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
         deckFirstIndex = 12
         cards.indices.forEach { cards[$0].isOnTable =  $0 < deckFirstIndex}
         emptyFoundSet()
-        dismismatchCards()
-        deselectSelectedCards()
+        deselectAllCards()
         cards.shuffle()
+    }
+    
+    mutating func indicateHint() {
+        deselectAllCards()
+        
+        let newHintFound = checkForNextHint()
+        
+        if newHintFound.found {
+            #warning("!!! Handle fatalError case")
+            guard let hint = newHintFound.hint else { fatalError() }
+            let first = hint.sorted()[0]
+            let second = hint.sorted()[1]
+            let third = hint.sorted()[2]
+
+            cards[first].isHinted = true
+            cards[second].isHinted = true
+            cards[third].isHinted = true
+            
+            shownHints.append(hint)
+        } else {
+            print("NO MORE HINTS")
+            
+            deselectAllCards()
+            shownHints = Array()
+        }
+    }
+    
+    private func checkForNextHint() -> (found: Bool, hint: Set<Int>?) {
+
+        func checkHint(with first: Int, and second: Int) ->  (found: Bool, hint: Set<Int>?) {
+            let matchingCard = setChecker.thirdCardToHaveASet(for: cards[first], and: cards[second])
+            guard let thirdCard = cards.first(where: {
+                return $0.number == matchingCard.number &&
+                $0.color == matchingCard.color &&
+                $0.figure == matchingCard.figure &&
+                $0.variation == matchingCard.variation
+            #warning("!!! Handle fatalError case")
+            } ) else { fatalError() }
+            
+            if thirdCard.isOnTable {
+                #warning("!!! Handle fatalError case")
+                guard let third = cards.firstIndex(where: { $0.id == thirdCard.id } ) else { fatalError() }
+                let hint: Set<Int> = [first, second, third]
+                if !shownHints.contains(hint) {
+                    return (found: true, hint: hint)
+                }
+            }
+
+            return (found: false, hint: nil)
+        }
+
+        var firstToCheck: Int
+        var secondToCheck: Int
+
+        if let lastHint = shownHints.last {
+            let lastHintArray: Array<Int> = lastHint.sorted()
+            firstToCheck = lastHintArray[0]
+            secondToCheck = lastHintArray[1]
+        } else {
+            firstToCheck = 0
+            secondToCheck = 1
+        }
+        
+        var newHintFound: (found: Bool, hint: Set<Int>?) = (found: false, hint: nil)
+        
+        for second in (secondToCheck..<cards.count) {
+            if cards[second].isOnTable {
+                newHintFound = checkHint(with: firstToCheck, and: second)
+                if newHintFound.found == true {
+                    return newHintFound
+                }
+            }
+        }
+        
+        for first in (firstToCheck + 1..<cards.count) {
+            if cards[first].isOnTable {
+                for second in ((first + 1)..<cards.count) {
+                    if cards[second].isOnTable {
+                        newHintFound = checkHint(with: first, and: second)
+                        if newHintFound.found == true {
+                            return newHintFound
+                        }
+                    }
+                }
+            }
+        }
+
+        return newHintFound
     }
     
     mutating func addCards() {

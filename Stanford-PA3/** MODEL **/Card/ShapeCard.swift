@@ -26,4 +26,5 @@ struct ShapeCard: Card {
     var isSelected = false
     var isInSet = false
     var isInMismatch = false
+    var isHinted = false
 }

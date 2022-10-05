@@ -37,6 +37,7 @@ extension Array {
 extension Array where Element: Equatable {
     func requiredValue(to value1: Element, and value2: Element) -> Element? {
         if self.count != 3 || !self.contains(value1) || !self.contains(value2) {
+            #warning("??? Maybe fatalError?")
             return nil
         }
                 

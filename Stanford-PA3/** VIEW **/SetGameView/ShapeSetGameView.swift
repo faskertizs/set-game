@@ -32,6 +32,8 @@ struct ShapeSetGameView: View {
             HStack {
                 newGame()
                 Spacer()
+                hint
+                Spacer()
                 addCards
             }
             .padding(.horizontal, 15)
@@ -43,6 +45,14 @@ struct ShapeSetGameView: View {
             viewModel.newGame()
         } label: {
             Text("New Game")
+        }
+    }
+    
+    var hint: some View {
+        Button {
+            viewModel.showHint()
+        } label: {
+            Text("Hint")
         }
     }
     

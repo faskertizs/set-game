@@ -24,5 +24,5 @@ protocol Card: Identifiable {
     var isSelected: Bool { get set }
     var isInSet: Bool { get set }
     var isInMismatch: Bool { get set }
-
+    var isHinted: Bool { get set }
 }
