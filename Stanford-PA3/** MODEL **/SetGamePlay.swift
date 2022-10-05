@@ -33,7 +33,7 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
             cards[index].isOnTable = true
         }
         
-//        setGameNearFinish()
+//        setGameNearFinishForTest()
     }
     
     func cardsOnTable() -> [CardContents.CardType] {
@@ -170,7 +170,7 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
     
 // MARK: - Functions only for test
     
-    private mutating func setGameNearFinish() {
+    private mutating func setGameNearFinishForTest() {
         for index in cards.indices {
             cards[index].isOnTable = (index >= 75)
         }

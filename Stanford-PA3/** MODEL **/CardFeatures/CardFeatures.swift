@@ -11,7 +11,6 @@ protocol CardFeatures {
     associatedtype Color
     associatedtype Figure
     associatedtype Variation
-    
     associatedtype CardType: Card where CardType.Color == Color, CardType.Figure == Figure, CardType.Variation == Variation
     
     var numbers: [Int] { get }

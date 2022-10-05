@@ -210,11 +210,11 @@
 			isa = PBXGroup;
 			children = (
 				0BAD523A2794D4280012A963 /* Stanford_PA3App.swift */,
+				0B598FE82797473B001F8876 /* AspectVGrid.swift */,
 				0BD31A2A279DFF2B00C76675 /* ShapeCardContentBuilder.swift */,
 				0B4DDCDE279CC031009F1DCD /* Shape */,
 				0B4DDCD5279CAF37009F1DCD /* SetGameView */,
 				0B4C948F279C4FDB0099EA81 /* CardView */,
-				0B598FE82797473B001F8876 /* AspectVGrid.swift */,
 			);
 			path = "** VIEW **";
 			sourceTree = "<group>";

@@ -9,7 +9,6 @@ import Foundation
 
 protocol CardViewModel: Identifiable {
     associatedtype CardType
+    
     init(with card: ShapeCardFeatures.CardType)
-    
-    
 }

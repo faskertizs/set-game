@@ -18,5 +18,4 @@ protocol SetGameViewModel: ObservableObject {
     func cardViewModels() -> [CardViewModel]
     
     func choose(card: CardViewModel)
-
 }
