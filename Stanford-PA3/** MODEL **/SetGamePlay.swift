@@ -140,6 +140,9 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
     
     mutating func indicateHint() {
         deselectAllCards()
+        if inSetCardIndices().count == 3 {
+            replaceInSetCards()
+        }
         
         let newHintFound = checkForNextHint()
         
