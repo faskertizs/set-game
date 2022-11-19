@@ -42,6 +42,10 @@ struct ShapeSetGameView: View {
             }
             .padding(.horizontal, 15)
         }
+        .contentShape(Rectangle())
+        .onTapGesture(perform: {
+            viewModel.backgroundWasTapped()
+        })
         .alert("No more hint", isPresented: $viewModel.noMoreHint) {
             Button("Ok", action: {} )
         }

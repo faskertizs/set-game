@@ -72,4 +72,8 @@ extension SetGameViewModel {
     func showHint() {
         gamePlay.indicateHint()
     }
+    
+    func backgroundWasTapped() {
+        gamePlay.hideHintIndication()
+    }
 }

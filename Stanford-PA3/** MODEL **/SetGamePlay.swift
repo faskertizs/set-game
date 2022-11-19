@@ -15,7 +15,9 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
     
     private var shownHints: Array<(Set<Int>)> = Array()
 
-    private var deckFirstIndex = 12
+    private let startingCardsCount = 12
+
+    private var deckFirstIndex: Int
     
     var noMoreHint = false
 
@@ -35,6 +37,8 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
             }
         }
         cards.shuffle()
+        
+        deckFirstIndex = startingCardsCount
         
         for index in (0..<deckFirstIndex) {
             cards[index].isOnTable = true
@@ -81,11 +85,11 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
     }
     
     mutating func startNewGame() {
-        deckFirstIndex = 12
-        cards.indices.forEach { cards[$0].isOnTable =  $0 < deckFirstIndex}
         emptyFoundSet()
         unmarkAllCards()
         cards.shuffle()
+        deckFirstIndex = startingCardsCount
+        cards.indices.forEach { cards[$0].isOnTable =  $0 < deckFirstIndex}
     }
     
     mutating func indicateHint() {
@@ -114,6 +118,11 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
             unmarkAllCards()
             shownHints = Array()
         }
+    }
+    
+    mutating func hideHintIndication() {
+        shownHints = []
+        cards.indices.forEach { cards[$0].isHinted = false }
     }
     
     mutating func addCards() {
@@ -223,11 +232,13 @@ struct SetGamePlay<CardContents> where CardContents: CardFeatures {
         
         var newHintFound: (found: Bool, hint: Set<Int>?) = (found: false, hint: nil)
         
-        for second in (secondToCheck..<cards.count) {
-            if cards[second].isOnTable {
-                newHintFound = checkHint(with: firstToCheck, and: second)
-                if newHintFound.found == true {
-                    return newHintFound
+        if cards[firstToCheck].isOnTable {
+            for second in (secondToCheck..<cards.count) {
+                if cards[second].isOnTable  {
+                    newHintFound = checkHint(with: firstToCheck, and: second)
+                    if newHintFound.found == true {
+                        return newHintFound
+                    }
                 }
             }
         }
