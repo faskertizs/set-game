@@ -33,12 +33,13 @@ struct ShapeSetGameView: View {
                 }
             }
             Spacer()
-            HStack {
-                newGame()
-                Spacer()
-                hint
-                Spacer()
-                addCards
+            ZStack {
+                HStack {
+                    newGame()
+                    Spacer()
+                    addCards
+                }
+                hint                
             }
             .padding(.horizontal, 15)
         }
